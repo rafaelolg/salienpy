@@ -11,21 +11,26 @@ def frequency_tuned_saliency(img):
     Detection, IEEE International Conference on Computer Vision and Pattern Recognition
 
     Args:
-        img (numpy.array): a 3-channel image color image.
+        img (numpy.array): an image.
 
     Returns:
        a 2d image saliency map.
     """
     img = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
     #mean of each channel
-    m = numpy.asarray([img[:,:,0].mean(), img[:,:,1].mean(), img[:,:,2].mean()])
+    means = []
+
+    for c in range(img.shape[2]):
+        means.append(img[:,:,c].mean())
+    means = numpy.asarray(means)
+
     img = cv2.medianBlur(img, 9)
-    dist = (img - m)**2
-    print("mean color is %s"% m)
+    dist = (img - means)**2
+    print("mean color is %s"% means)
     salmap = numpy.zeros((dist.shape[0], dist.shape[1]))
-    for l in range(dist.shape[0]):
-        for c in range(dist.shape[1]):
-            salmap[l][c] = numpy.sqrt(dist[l][c].sum())
+    for i in range(dist.shape[0]):
+        for j in range(dist.shape[1]):
+            salmap[i][j] = numpy.sqrt(dist[i][j].sum())
     #minmax normalization
     salmap = (salmap -salmap.min())
     salmap = salmap/salmap.max()

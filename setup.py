@@ -3,17 +3,20 @@ try:
 except ImportError:
     from distutils.core import setup
 
-config = {
-    'description': 'Salienpy',
-    'author': 'Rafael Lopes',
-    'url': '.',
-    'download_url': 'Where to download it.',
-    'author_email': 'rafaellg@vision.ime.usp.br',
-    'version': '0.1',
-    'install_requires': ['nose', 'opencv'],
-    'packages': ['salienpy'],
-    'scripts': [],
-    'name': 'salienpy'
-}
-
-setup(**config)
+setup(
+    name = "salienpy",
+    version = "0.0.1",
+    author = "Rafael Lopes",
+    author_email = "rafaellg@vision.com",
+    description = ("A image visual saliency toolbox"),
+    license = "BSD",
+    keywords = "saliency computer_vision image",
+    url = "http://packages.python.org/salienpy",
+    packages=['salienpy', 'tests'],
+    classifiers=[
+        'Development Status :: 2 - Pre-Alpha',
+        'Topic :: Scientific/Engineering :: Image Recognition',
+        'Intended Audience :: Science/Research',
+        "License :: OSI Approved :: BSD License",
+    ],
+)
