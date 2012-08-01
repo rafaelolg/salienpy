@@ -7,7 +7,7 @@ def frequency_tuned_saliency(img):
     Frequency Tuned Saliency.
     Find the Euclidean distance between the Lab pixel vector in a Gaussian filtered image
     with the average Lab vector for the input image.
-    R. Achanta, S. Hemami, F. Estrada and S. Süsstrunk, Frequency-tuned Salient Region
+    R. Achanta, S. Hemami, F. Estrada and S. Susstrunk, Frequency-tuned Salient Region
     Detection, IEEE International Conference on Computer Vision and Pattern Recognition
 
     Args:
