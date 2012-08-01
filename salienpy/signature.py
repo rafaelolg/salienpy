@@ -1,6 +1,7 @@
 #!/usr/bin/env python2
 import cv2
 import numpy as np
+from commons import minmaxnormalization
 
 def signature_saliency(img):
     """
@@ -14,6 +15,7 @@ def signature_saliency(img):
     img = img_padded_for_dct(img)
     img = img/255.0
     sal = []
+
     for c in range(img.shape[2]):
         channel = img[:,:,c].astype(np.dtype('float32'))
         channel_dct = np.sign(cv2.dct(channel))
@@ -23,9 +25,7 @@ def signature_saliency(img):
     sal = sum(sal)/3.0
     sal = cv2.GaussianBlur(sal, (11,11), 0)
     sal = sal[:old_shape[0], :old_shape[1]]
-    sal = sal / (sal.max())
-    sal = sal - (sal.min())
-    return sal
+    return minmaxnormalization(sal)
 
 def img_padded_for_dct(img):
     h = img.shape[0]
