@@ -34,3 +34,5 @@ nosetests.xml
 
 #Mr Developer
 .mr.developer.cfg
+/salienpy.sublime-project
+/salienpy.sublime-workspace
