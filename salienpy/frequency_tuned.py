@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import cv2
 import numpy
+from commons import minmaxnormalization
 
 def frequency_tuned_saliency(img):
     """
@@ -19,7 +20,6 @@ def frequency_tuned_saliency(img):
     img = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
     #mean of each channel
     means = []
-
     for c in range(img.shape[2]):
         means.append(img[:,:,c].mean())
     means = numpy.asarray(means)
@@ -31,8 +31,5 @@ def frequency_tuned_saliency(img):
     for i in range(dist.shape[0]):
         for j in range(dist.shape[1]):
             salmap[i][j] = numpy.sqrt(dist[i][j].sum())
-    #minmax normalization
-    salmap = (salmap -salmap.min())
-    salmap = salmap/salmap.max()
-    salmap = 255*salmap
+    return minmaxnormalization(salmap)
 
