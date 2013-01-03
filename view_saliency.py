@@ -11,6 +11,7 @@ def main(img):
     cv2.imshow('Frequency Tuned', ftuned)
     signa = salienpy.signature.signature_saliency(img)
     cv2.imshow('Signature Saliency', signa)
+    cv2.imwrite('signature.png', signa)
     cv2.waitKey()
 
 
