@@ -5,7 +5,7 @@ from sklearn.decomposition import FastICA
 from sklearn.cluster import KMeans
 from matplotlib import pyplot
 
-def extract_dictionary(image, patches_size=(12,12), projection_dimensios=24, previous_dictionary=None):
+def extract_dictionary(image, patches_size=(12,12), projection_dimensios=25, previous_dictionary=None):
     """
     Gets a higher dimension ica projection image.
 
@@ -24,6 +24,8 @@ if __name__ == '__main__':
     import sys
     image = imread(sys.argv[1])
     d = extract_dictionary(image)
+
+    import ipdb;ipdb.set_trace()
     components  = d.components_ -  d.components_.min()
     components  = 255* (components/components.max())
     components = components.astype('uint8')
