@@ -4,14 +4,23 @@ import numpy
 import sys
 import salienpy.frequency_tuned
 import salienpy.signature
+import salienpy.kmeans_frequency
+
 
 def main(img):
     cv2.imshow('Original Image', img)
-    ftuned = salienpy.frequency_tuned.frequency_tuned_saliency(img)
-    cv2.imshow('Frequency Tuned', ftuned)
-    signa = salienpy.signature.signature_saliency(img)
-    cv2.imshow('Signature Saliency', signa)
-    cv2.imwrite('signature.png', signa)
+    saliency_methods = [
+                ('frequency_tuned',
+                    salienpy.frequency_tuned.frequency_tuned_saliency),
+                ('signature',
+                    salienpy.signature.signature_saliency),
+                ('kmeans_frequency',
+                        salienpy.kmeans_frequency.kmeans_frequency_saliency)]
+
+    for name, method in saliency_methods:
+        sal_img = method(img)
+        cv2.imshow(name, sal_img)
+        cv2.imwrite(name + '.png', sal_img)
     cv2.waitKey()
 
 
