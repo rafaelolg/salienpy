@@ -8,6 +8,28 @@ from commons import gen_even_slices
 
 
 
+def kmeans_frequency_tuned_saliency(image):
+    """
+    Frequency Tuned Saliency.
+    Args:
+        image (numpy.array): an image.
+
+    Returns:
+       a 2d image saliency map.
+    """
+    components = extract_dictionary(image)
+    encoded = image_to_dictionary_space(image, components)
+    print "encoding patches shape = %s"% str(encoded.shape)
+    encoded = encoded - encoded.mean(axis=0)
+    encoded = encoded / abs(encoded).max()
+    sal = numpy.sqrt(numpy.sum(encoded * encoded, axis=1))
+    sal = numpy.reshape(sal, (image.shape[0] - 11, image.shape[1] - 11))
+    sal = sal - sal.min()
+    sal = sal * (255/sal.max())
+    return sal
+
+
+
 def calculate_max_number_of_patches(image, patches_size=(12,12), max_number = 100000):
     fitting_patches = image.shape[0] * image.shape[1]
     fitting_patches = fitting_patches - (image.shape[0]*(patches_size[1] -1))
@@ -45,27 +67,19 @@ if __name__ == '__main__':
     from  cv2 import imread, imwrite
     import sys
     image = imread(sys.argv[1])
-    components = extract_dictionary(image)
-    encoded = image_to_dictionary_space(image, components)
-    print "encoding patches shape = %s"% str(encoded.shape)
-    encoded = encoded - encoded.mean(axis=0)
-    encoded = encoded / abs(encoded).max()
-    sal = numpy.sqrt(numpy.sum(encoded * encoded, axis=1))
-    sal = numpy.reshape(sal, (image.shape[0] - 11, image.shape[1] - 11))
-    sal = sal - sal.min()
-    sal = sal * (255/sal.max())
+    sal = kmeans_frequency_tuned_saliency(image)
     imwrite('saliency.jpg', sal)
 
-    import matplotlib
-    matplotlib.use('Agg')
-    from matplotlib import pyplot
-    components  = components -  components.min()
-    components  = 255* (components/components.max())
-    
-    fig = pyplot.figure()
-    components = components.astype('uint8')
-    for i, c in enumerate(components):
-        ax = fig.add_subplot(12, 2, i + 1)
-        c = c.reshape((12,12,3))
-        ax.imshow(c)
-    pyplot.savefig('out.png')
+    #import matplotlib
+    #matplotlib.use('Agg')
+    #from matplotlib import pyplot
+    #components  = components -  components.min()
+    #components  = 255* (components/components.max())
+
+    #fig = pyplot.figure()
+    #components = components.astype('uint8')
+    #for i, c in enumerate(components):
+    #    ax = fig.add_subplot(12, 2, i + 1)
+    #    c = c.reshape((12,12,3))
+    #    ax.imshow(c)
+    #pyplot.savefig('out.png')
