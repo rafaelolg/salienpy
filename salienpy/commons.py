@@ -1,10 +1,10 @@
 def minmaxnormalization(vector):
     """
     Makes the min max normalization over a numpy vector
-    $$ v_i = (v_i / max(v)) - (min((v_i)/max(v_i))
+    $$ v_i = (v_i - min(v)) / max(v)
     """
-    vector = vector / (vector.max())
     vector = vector - (vector.min())
+    vector = vector / (vector.max())
     return vector
 
 
