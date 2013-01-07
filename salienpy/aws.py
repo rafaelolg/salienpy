@@ -64,10 +64,10 @@ def extract_components(image, patches_size=(12,12), projection_dimensios=12, pre
 def image_to_components_space(image, components, mean_value, patches_size=(12,12)):
     patches = extract_patches_2d(image, patches_size)
     patches = numpy.reshape(patches, (patches.shape[0],-1))
-    patches = (patches - mean_value)
     sparse_coder = SparseCoder(components, transform_algorithm='threshold')
     encoded = []
     for s in gen_even_slices(len(patches), 100):
+        data = patches[s] - mean_value
         encoded.extend(sparse_coder.transform(patches[s]))
     return numpy.asarray(encoded)
 
