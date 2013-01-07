@@ -1,15 +1,14 @@
 import numpy
 from sklearn.feature_extraction.image import extract_patches_2d
-#from sklearn.decomposition import MiniBatchDictionaryLearning
 from sklearn.decomposition import FastICA
-#from sklearn.cluster import MiniBatchKMeans
 from sklearn.decomposition import SparseCoder
 from commons import gen_even_slices
+from commons import minmaxnormalization
 
 
 
 
-def aws_saliency(image, show_info=false):
+def aws_saliency(image, show_info=False):
     """
     Frequency Tuned Saliency.
     Args:
@@ -28,8 +27,6 @@ def aws_saliency(image, show_info=false):
     encoded = encoded / abs(encoded).max()
     sal = numpy.sqrt(numpy.sum(encoded * encoded, axis=1))
     sal = numpy.reshape(sal, (image.shape[0] - 11, image.shape[1] - 11))
-    sal = sal - sal.min()
-    sal = sal * (255/sal.max())
     frequency_diff_time = time()
     total_time = time()
     if show_info:
@@ -39,7 +36,7 @@ def aws_saliency(image, show_info=false):
                 frequency_diff_time - ecoding_time, 
                 total_time-t0)
         plot_components(components)
-    return sal
+    return minmaxnormalization(sal)
 
 
 
@@ -98,6 +95,6 @@ if __name__ == '__main__':
     from  cv2 import imread, imwrite
     import sys
     image = imread(sys.argv[1])
-    sal = kmeans_frequency_tuned_saliency(image)
-    imwrite('saliency.jpg', sal)
-
+    sal = aws_saliency(image)
+    import ipdb;ipdb.set_trace()
+    imwrite('saliency.jpg', 255 * sal.astype('uint8'))

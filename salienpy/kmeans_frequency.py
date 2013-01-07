@@ -5,6 +5,7 @@ from sklearn.feature_extraction.image import extract_patches_2d
 from sklearn.cluster import MiniBatchKMeans
 from sklearn.decomposition import SparseCoder
 from commons import gen_even_slices
+from commons import minmaxnormalization
 
 
 
@@ -24,9 +25,7 @@ def kmeans_frequency_tuned_saliency(image):
     encoded = encoded / abs(encoded).max()
     sal = numpy.sqrt(numpy.sum(encoded * encoded, axis=1))
     sal = numpy.reshape(sal, (image.shape[0] - 11, image.shape[1] - 11))
-    sal = sal - sal.min()
-    sal = sal * (255/sal.max())
-    return sal
+    return minmaxnormalization(sal)
 
 
 
