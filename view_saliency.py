@@ -5,19 +5,13 @@ import sys
 from time import time
 import salienpy.frequency_tuned
 import salienpy.signature
-import salienpy.kmeans_frequency
-import salienpy.aws
+import salienpy.dictionary_frequency
 
 
 def main(img):
-    saliency_methods = [ ('aws',
-                             salienpy.aws.aws_saliency),
-                         ('frequency_tuned',
-                             salienpy.frequency_tuned.frequency_tuned_saliency),
-                         ('signature',
-                             salienpy.signature.signature_saliency),
-                       #  ('kmeans_frequency',
-                       #      salienpy.kmeans_frequency.kmeans_frequency_tuned_saliency)
+    saliency_methods = [ ('dictionary_ica_saliency', salienpy.dictionary_frequency.dictionary_saliency),
+                         ('frequency_tuned', salienpy.frequency_tuned.frequency_tuned_saliency),
+                         ('signature', salienpy.signature.signature_saliency),
                        ]
 
     for name, method in saliency_methods:
