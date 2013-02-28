@@ -25,7 +25,7 @@ def signature_saliency(img):
     sal = sum(sal)/3.0
     sal = cv2.GaussianBlur(sal, (11,11), 0)
     sal = sal[:old_shape[0], :old_shape[1]]
-    return minmaxnormalization(sal)
+    return sal
 
 def img_padded_for_dct(img):
     h = img.shape[0]
