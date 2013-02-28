@@ -6,9 +6,7 @@ from sklearn.cluster import MiniBatchKMeans
 from sklearn.decomposition import SparseCoder
 from commons import gen_even_slices
 from commons import minmaxnormalization
-
-
-
+from multiscale import multiscale_saliency
 
 
 def dictionary_saliency(image,algorithm='ica', show_info=False):
@@ -21,6 +19,11 @@ def dictionary_saliency(image,algorithm='ica', show_info=False):
     Returns:
        a 2d image saliency map.
     """
+    method = lambda img: _dictionary_saliency(img, algorithm, show_info)
+    return multiscale_saliency(image,method)
+
+
+def _dictionary_saliency(image,algorithm='ica', show_info=False):
     from time import time
     t0 = time()
     components, mean_value = extract_components(image, algorithm)
@@ -40,11 +43,11 @@ def dictionary_saliency(image,algorithm='ica', show_info=False):
                 frequency_diff_time - ecoding_time,
                 total_time-t0)
         plot_components(components)
-    return minmaxnormalization(sal)
+    return sal
 
 
 
-def calculate_max_number_of_patches(image, patches_size=(12,12), max_number = 100000):
+def calculate_max_number_of_patches(image, patches_size=(12,12), max_number = 10000):
     fitting_patches = image.shape[0] * image.shape[1]
     fitting_patches = fitting_patches - (image.shape[0]*(patches_size[1] -1))
     fitting_patches = fitting_patches - (image.shape[1]*(patches_size[0] -1))
