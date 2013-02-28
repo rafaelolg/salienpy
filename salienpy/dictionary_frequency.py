@@ -47,7 +47,7 @@ def _dictionary_saliency(image,algorithm='ica', show_info=False):
 
 
 
-def calculate_max_number_of_patches(image, patches_size=(12,12), max_number = 10000):
+def calculate_max_number_of_patches(image, patches_size=(12,12), max_number = 100000):
     fitting_patches = image.shape[0] * image.shape[1]
     fitting_patches = fitting_patches - (image.shape[0]*(patches_size[1] -1))
     fitting_patches = fitting_patches - (image.shape[1]*(patches_size[0] -1))
@@ -70,8 +70,9 @@ def extract_components(image,
     patches = (patches - mean_value)
     if algorithm == 'ica':
         ica = FastICA(n_components=projection_dimensios, whiten=True, max_iter=10)
-        ica.fit(patches.T)
-        components = ica.components_.T
+        ica.fit(patches)
+        import ipdb; ipdb.set_trace()
+        components = ica.components_
     elif algorithm == 'kmeans':
         kmeans  = MiniBatchKMeans(projection_dimensios,compute_labels=False)
         kmeans.fit(patches)
@@ -84,7 +85,7 @@ def image_to_components_space(image, components, mean_value, patches_size=(12,12
     patches = numpy.reshape(patches, (patches.shape[0],-1))
     sparse_coder = SparseCoder(components, transform_algorithm='threshold')
     encoded = []
-    for s in gen_even_slices(len(patches), 100):
+    for s in gen_even_slices(len(patches), 1000):
         data = patches[s] - mean_value
         encoded.extend(sparse_coder.transform(patches[s]))
     return numpy.asarray(encoded)
