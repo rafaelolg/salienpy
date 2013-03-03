@@ -102,10 +102,7 @@ if __name__ == '__main__':
     import sys
     image = imread(sys.argv[1])
     sal = dictionary_saliency(image, 'ica', True)
-    imwrite('saliency_ica.png', 255 * sal.astype('uint8'))
+    sal = minmaxnormalization(sal)
+    imwrite(sys.argv[2], 255 * sal.astype('uint8'))
     del image
     del sal
-
-    #image = imread(sys.argv[1])
-    #sal = dictionary_saliency(image, 'kmeans')
-    #imwrite('saliency_kmeans.jpg', 255 * sal.astype('uint8'))
