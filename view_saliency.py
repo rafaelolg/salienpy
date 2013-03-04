@@ -6,6 +6,7 @@ from time import time
 import salienpy.frequency_tuned
 import salienpy.signature
 import salienpy.dictionary_frequency
+from  salienpy.commons import minmaxnormalization
 
 
 def main(img):
@@ -19,6 +20,7 @@ def main(img):
         t = time()
         sal_img = method(img.copy())
         t = t - time()
+        sal_img = minmaxnormalization(sal_img)
         cv2.imshow('%s  took %ss'%(name, t),255 -  (255 * sal_img).astype('uint8'))
         cv2.imwrite(name+'.png',255 -  (255 * sal_img).astype('uint8'))
     cv2.waitKey()
