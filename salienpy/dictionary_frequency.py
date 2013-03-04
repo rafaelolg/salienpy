@@ -71,7 +71,6 @@ def extract_components(image,
     if algorithm == 'ica':
         ica = FastICA(n_components=projection_dimensios, whiten=True, max_iter=10)
         ica.fit(patches)
-        import ipdb; ipdb.set_trace()
         components = ica.components_
     elif algorithm == 'kmeans':
         kmeans  = MiniBatchKMeans(projection_dimensios,compute_labels=False)
