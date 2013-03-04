@@ -10,7 +10,6 @@ def multiscale_saliency(image, method, min_image_area=10000):
     The final result is an image with the same size as the original.
 
     '''
-    print 'calculating for shape = %s, %s'% image.shape[:2]
     sals = None
     count = 0
     for img in pyramid_laplacian(image, 1):
