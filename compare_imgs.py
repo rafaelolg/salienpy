@@ -32,7 +32,6 @@ if __name__ == '__main__':
         cv2.imwrite(sys.argv[3],(255 * minmaxnormalization(sal_a)).astype('uint8'))
         cv2.imwrite(sys.argv[4],(255 * minmaxnormalization(sal_b)).astype('uint8'))
         cv2.imwrite(sys.argv[5],(255 * minmaxnormalization(sal_a - sal_b)).astype('uint8'))
-        print '%s\t%s\t%s\t%s\t%s' % sys.argv[1:6]
     else:
         import pprint
         pprint.pprint(sys.argv)
