@@ -17,7 +17,7 @@ def dictionary_saliency(image,algorithm='ica', show_info=False):
         algorithm: the algorithm to create the sparse dictionary .
             Accepted values  are kmeans and ica.
     Returns:
-       a 2d image saliency map.
+       a 2d image saliency map in z-value space.
     """
     method = lambda img: _dictionary_saliency(img, algorithm, show_info)
     return _dictionary_saliency(image, algorithm, show_info)
@@ -33,6 +33,7 @@ def _dictionary_saliency(image,algorithm='ica', show_info=False):
     encoded = encoded - encoded.mean(axis=0)
     sal = numpy.sqrt(numpy.sum(encoded * encoded, axis=1))
     sal = numpy.reshape(sal, (image.shape[0] - 15, image.shape[1] - 15))
+    sal = (sal - sal.mean())/sal.std()
     frequency_diff_time = time()
     total_time = time()
     if show_info:
