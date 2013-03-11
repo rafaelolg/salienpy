@@ -19,7 +19,7 @@ def main(img_a, img_b):
         sal_a = method(img_a.copy())
         sal_b = method(img_b.copy())
         t = t - time()
-        print 'time = %s'
+        print 'time = %s'% t
 
         return sal_a , sal_b
 
@@ -31,7 +31,9 @@ if __name__ == '__main__':
         sal_a, sal_b = main(img_a, img_b)
         cv2.imwrite(sys.argv[3],(255 * minmaxnormalization(sal_a)).astype('uint8'))
         cv2.imwrite(sys.argv[4],(255 * minmaxnormalization(sal_b)).astype('uint8'))
-        cv2.imwrite(sys.argv[5],(255 * minmaxnormalization(sal_a - sal_b)).astype('uint8'))
+        dif = sal_a - sal_b
+        cv2.imwrite(sys.argv[5],(255 * minmaxnormalization(dif)).astype('uint8'))
+        print 'minima dif= %s, max dif = %s' %(dif.min(), dif.max())
     else:
         import pprint
         pprint.pprint(sys.argv)
