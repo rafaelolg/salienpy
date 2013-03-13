@@ -9,6 +9,8 @@ from commons import minmaxnormalization
 from multiscale import multiscale_saliency
 
 
+DEFAULT_PATCHE_SIZE = 16
+
 def dictionary_saliency(image,algorithm='ica', show_info=False):
     """
     Dictionary frequency Tuned Saliency.
@@ -28,11 +30,14 @@ def _dictionary_saliency(image,algorithm='ica', show_info=False):
     t0 = time()
     encoder = calculate_encoder(image, algorithm)
     train_time = time()
-    encoded = image_to_components_space(image, encoder, algorithm)
+    encoded = image_to_components_space(image, encoder)
     ecoding_time = time()
+    #distance to mean value
     encoded = encoded - encoded.mean(axis=0)
     sal = numpy.sqrt(numpy.sum(encoded * encoded, axis=1))
-    sal = numpy.reshape(sal, (image.shape[0] - 15, image.shape[1] - 15))
+    sal = numpy.reshape(sal, (image.shape[0] - (DEFAULT_PATCHE_SIZE-1),
+                              image.shape[1] -(DEFAULT_PATCHE_SIZE-1)))
+    #saliency in z-value value
     sal = (sal - sal.mean())/sal.std()
     frequency_diff_time = time()
     total_time = time()
@@ -42,7 +47,7 @@ def _dictionary_saliency(image,algorithm='ica', show_info=False):
                 ecoding_time - train_time,
                 frequency_diff_time - ecoding_time,
                 total_time-t0)
-        plot_components(extract_components(encoder, algorithm),(16,16))
+        plot_components(extract_components(encoder, algorithm),(DEFAULT_PATCHE_SIZE,DEFAULT_PATCHE_SIZE))
     return sal
 
 
@@ -51,7 +56,7 @@ def extract_components(encoder, algorithm):
         return encoder.components_
 
 
-def calculate_max_number_of_patches(image, patches_size=(16,16), max_number = 100000):
+def calculate_max_number_of_patches(image, patches_size=(DEFAULT_PATCHE_SIZE,DEFAULT_PATCHE_SIZE), max_number = 10000):
     fitting_patches = image.shape[0] * image.shape[1]
     fitting_patches = fitting_patches - (image.shape[0]*(patches_size[1] -1))
     fitting_patches = fitting_patches - (image.shape[1]*(patches_size[0] -1))
@@ -60,43 +65,38 @@ def calculate_max_number_of_patches(image, patches_size=(16,16), max_number = 10
 
 def calculate_encoder(image,
                        algorithm,
-                       patches_size=(16,16),
-                       projection_dimensios=16,
+                       patches_size=(DEFAULT_PATCHE_SIZE,DEFAULT_PATCHE_SIZE),
+                       projection_dimensios=DEFAULT_PATCHE_SIZE,
                        previous_components=None):
     """
     Gets a higher dimension sparse dictionary.algorithm can be
     ica, kmeans or colors.
 
     """
-    patches = extract_patches_2d(image, patches_size)
+    patches = extract_patches_2d(image, patches_size,
+            calculate_max_number_of_patches(image, patches_size) )
     patches = numpy.reshape(patches, (patches.shape[0],-1)).astype(float)
+    encoder = None
     if algorithm == 'ica':
-        ica = FastICA(n_components=projection_dimensios, whiten=True, max_iter=10)
-        ica.fit(patches)
-        return ica
+        encoder = FastICA(n_components=projection_dimensios, whiten=True, max_iter=10)
     elif algorithm == 'kmeans':
-        kmeans  = MiniBatchKMeans(projection_dimensios,compute_labels=False)
-        kmeans.fit(patches)
-        return kmeans
+        encoder  = MiniBatchKMeans(projection_dimensios,compute_labels=False)
     else:
         raise Exception('Unknow algorithm %s' % algorithm)
+    encoder.fit(patches)
+    return encoder
 
 
-def image_to_components_space(image, encoder, algorithm, patches_size=(16,16)):
-    if algorithm ==  'ica':
-        return  encoder.sources_
-    elif algorithm == 'kmeans':
-        patches = extract_patches_2d(image, patches_size)
-        patches = numpy.reshape(patches, (patches.shape[0],-1))
-        sparse_coder = SparseCoder(components, transform_algorithm='threshold')
-        encoded = []
-        for s in gen_even_slices(len(patches), 1000):
-            data = patches[s] - mean_value
-            encoded.extend(sparse_coder.transform(patches[s]))
-        return numpy.asarray(encoded)
+def image_to_components_space(image, encoder,  patches_size=(DEFAULT_PATCHE_SIZE,DEFAULT_PATCHE_SIZE)):
+    patches = extract_patches_2d(image, patches_size)
+    patches = numpy.reshape(patches, (patches.shape[0],-1))
+    encoded = []
+    for s in gen_even_slices(len(patches), 100):
+        encoded.extend(encoder.transform(patches[s]))
+    return numpy.asarray(encoded)
 
 
-def plot_components(components, patches_size=(16,16)):
+def plot_components(components, patches_size=(DEFAULT_PATCHE_SIZE,DEFAULT_PATCHE_SIZE)):
     import cv2
     for i, comp in enumerate(components):
         c_img = (255 * minmaxnormalization(comp.reshape(patches_size[0],patches_size[1],3))).astype('uint8')
