@@ -54,6 +54,9 @@ def _dictionary_saliency(image,algorithm='ica', show_info=False):
 def extract_components(encoder, algorithm):
     if algorithm == 'ica':
         return encoder.components_
+    if algorithm == 'kmeans':
+        return encoder.cluster_centers_
+
 
 
 def calculate_max_number_of_patches(image, patches_size=(DEFAULT_PATCHE_SIZE,DEFAULT_PATCHE_SIZE), max_number = 10000):
