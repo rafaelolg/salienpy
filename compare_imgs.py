@@ -10,6 +10,10 @@ import salienpy.signature
 import salienpy.dictionary_frequency
 import salienpy.comparison
 from salienpy.commons import minmaxnormalization
+from pylab import *
+import matplotlib.pyplot as plt
+from matplotlib import cm
+
 def main(img_a, img_b):
     saliency_methods = [ ('dictionary_ica_saliency', salienpy.dictionary_frequency.dictionary_saliency),
                        ]
@@ -20,8 +24,21 @@ def main(img_a, img_b):
         sal_b = method(img_b.copy())
         t = t - time()
         print 'time = %s'% t
-
+        print 'correlacao = %s' % salienpy.comparison.compare_saliencies(sal_a, sal_b)
         return sal_a , sal_b
+
+
+def plot_dif(dif):
+        vmax=max([abs(i) for i in (dif.min(), dif.max())])
+        dif[0][0] = 3.7
+        dif[1][0]= -3.7
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        cax = ax.imshow(dif, cmap=cm.bwr)
+        cbar= fig.colorbar(cax)
+        plt.savefig(sys.argv[5])
+
+
 
 
 if __name__ == '__main__':
@@ -32,8 +49,10 @@ if __name__ == '__main__':
         cv2.imwrite(sys.argv[3],(255 * minmaxnormalization(sal_a)).astype('uint8'))
         cv2.imwrite(sys.argv[4],(255 * minmaxnormalization(sal_b)).astype('uint8'))
         dif = sal_a - sal_b
-        cv2.imwrite(sys.argv[5],(255 * minmaxnormalization(dif)).astype('uint8'))
-        print 'minima dif= %s, max dif = %s' %(dif.min(), dif.max())
+        dif_abs =  numpy.abs(dif)
+        #cv2.imwrite('dif_sal_absolut.png',
+        #(255 * minmaxnormalization(dif_abs)).astype('uint8'))
+        plot_dif(dif)
     else:
         import pprint
         pprint.pprint(sys.argv)
