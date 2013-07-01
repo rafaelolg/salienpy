@@ -20,8 +20,8 @@ def main(img_a, img_b):
 
     for name, method in saliency_methods:
         t = time()
-        sal_a = method(img_a.copy())
-        sal_b = method(img_b.copy())
+        sal_a = method(img_a.copy(), 'kmeans')
+        sal_b = method(img_b.copy(), 'kmeans')
         t = t - time()
         print 'time = %s'% t
         print 'correlacao = %s' % salienpy.comparison.compare_saliencies(sal_a, sal_b)
